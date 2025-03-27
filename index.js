@@ -1,23 +1,76 @@
-/* Your Code Here */
+// Create an employee record from an array of data
+function createEmployeeRecord([firstName, familyName, title, payPerHour]) {
+    return {
+        firstName,
+        familyName,
+        title,
+        payPerHour,
+        timeInEvents: [],
+        timeOutEvents: []
+    };
+}
 
-/*
- We're giving you this function. Take a look at it, you might see some usage
- that's new and different. That's because we're avoiding a well-known, but
- sneaky bug that we'll cover in the next few lessons!
+// Create multiple employee records from an array of arrays
+function createEmployeeRecords(employeeData) {
+    return employeeData.map(data => createEmployeeRecord(data));
+}
 
- As a result, the lessons for this function will pass *and* it will be available
- for you to use if you need it!
- */
+// Add a timeIn event to an employee's record
+function createTimeInEvent(dateStamp) {
+    const [date, hour] = dateStamp.split(' ');
+    this.timeInEvents.push({
+        type: "TimeIn",
+        hour: parseInt(hour, 10),
+        date
+    });
+    return this;
+}
 
+// Add a timeOut event to an employee's record
+function createTimeOutEvent(dateStamp) {
+    const [date, hour] = dateStamp.split(' ');
+    this.timeOutEvents.push({
+        type: "TimeOut",
+        hour: parseInt(hour, 10),
+        date
+    });
+    return this;
+}
+
+// Calculate the hours worked on a particular date
+function hoursWorkedOnDate(date) {
+    const timeIn = this.timeInEvents.find(e => e.date === date);
+    const timeOut = this.timeOutEvents.find(e => e.date === date);
+    return (timeOut.hour - timeIn.hour) / 100;
+}
+
+// Calculate the wages earned on a particular date
+function wagesEarnedOnDate(date) {
+    const hoursWorked = hoursWorkedOnDate.call(this, date);
+    return hoursWorked * this.payPerHour;
+}
+
+// Calculate all wages for an employee by summing the wages for all dates
 const allWagesFor = function () {
     const eligibleDates = this.timeInEvents.map(function (e) {
         return e.date
-    })
+    });
 
     const payable = eligibleDates.reduce(function (memo, d) {
-        return memo + wagesEarnedOnDate.call(this, d)
-    }.bind(this), 0) // <== Hm, why did we need to add bind() there? We'll discuss soon!
+        return memo + wagesEarnedOnDate.call(this, d);
+    }.bind(this), 0);
 
-    return payable
+    return payable;
 }
 
+// Find an employee by their first name
+function findEmployeeByFirstName(collection, firstNameString) {
+    return collection.find(employee => employee.firstName === firstNameString);
+}
+
+// Calculate the total payroll for a collection of employees
+function calculatePayroll(employeeRecords) {
+    return employeeRecords.reduce(function (memo, record) {
+        return memo + allWagesFor.call(record);
+    }, 0);
+}
